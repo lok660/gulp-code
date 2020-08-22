@@ -20,7 +20,151 @@ gulp4
 
 
 
+### 常用API
 
+src(globs, [options])：输入
+
+```js
+//	globs[string|array]: 要处理文件的路径匹配规则
+//	options：配置项
+const { src, dest } = require('gulp');
+
+function copy() {
+  return src('input/*.js', { sourcemaps: true })
+    .pipe(dest('output/'));
+}
+```
+
+dest(directory, [options])：输出
+
+```js
+//	directory[string|function]: 输出的路径
+//	options：配置项
+const { src, dest } = require('gulp');
+const uglify = require('gulp-uglify');
+
+src('input/**/*.js', { sourcemaps: true })
+  .pipe(uglify())
+  .pipe(dest('output/', { sourcemaps: '.' }));
+
+//	注意：dest的路径默认是基于当前路径，并不是输入文件的路径，如果需要输出到输入文件的相对路径，可以使用gulp-rename插件来实现。如我要将所有目录下的scss目录中的scss文件输出到scss同目录的css文件中:
+
+src('./SCOs/**/scss/*.scss')
+.pipe(sass())
+.pipe(rename(path=> path.dirname += '../../css'))
+.pipe(dest('./SCOs'));
+
+```
+
+series(...tasks)：顺序执行多个任务
+
+```js
+//	tasks[function|string]：任务名或者function
+const { series } = require('gulp');
+
+function javascript(cb) {
+  // body omitted
+  cb();
+}
+
+function css(cb) {
+  // body omitted
+  cb();
+}
+
+exports.build = series(javascript, css);
+```
+
+parallel(...tasks)：多个任务同时执行
+
+```js
+//	tasks[function|string]：任务名或者function
+const { parallel } = require('gulp');
+
+function javascript(cb) {
+  // body omitted
+  cb();
+}
+
+function css(cb) {
+  // body omitted
+  cb();
+}
+
+exports.build = parallel(javascript, css);
+```
+
+watch(globs, [options], [task])：文件监听
+
+```js
+//	globs[string|array]: 要监听的文件
+//	options：配置项，点击查看详情
+//	task[function|string]：要执行的任务或操作
+const { watch } = require('gulp');
+
+watch(['input/*.js', '!input/something.js'], function(cb) {
+  // body omitted
+  cb();
+});
+```
+
+```js
+//	监听方法会返回一个实例,该实例提供了如下几个方法
+
+watcher.on(eventName, eventHandler)
+//	eventName[string]：事件名称，可以是add, addDir, change, unlink, unlinkDir, ready, 	error, or all
+//	eventHandler[function]：事件处理函数，该函数接收path和stats两个参数。
+const { watch } = require('gulp');
+
+const watcher = watch(['input/*.js']);
+
+watcher.on('change', function(path, stats) {
+  console.log(`File ${path} was changed`);
+});
+
+watcher.on('add', function(path, stats) {
+  console.log(`File ${path} was added`);
+});
+
+watcher.on('unlink', function(path, stats) {
+  console.log(`File ${path} was removed`);
+});
+
+watcher.close();
+
+
+//	watcher.close()：关闭文件监听器
+//	watcher.add(globs)：添加文件到监听器
+
+//	globs[string|array]: 要添加的文件
+
+//	watcher.unwatch(globs)：移除监听器中的文件
+
+//	globs[string|array]: 要移除的文件
+```
+
+
+
+task([taskName], taskFunction)：定义任务（4.0推荐使用function替代此方法）
+
+```js
+//	taskName[string]：任务名称
+//	taskFunction[function]：处理函数
+const { task } = require('gulp');
+
+task('build', function(cb) {
+  // body omitted
+  cb();
+});
+
+const build = task('build');
+```
+
+
+
+
+
+### 插件
 
 - gulp-clean：用于清理;
 - gulp-notify：用于打印消息文本;
