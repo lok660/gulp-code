@@ -1,0 +1,105 @@
+// （1）实现js eslint检测、babel转换、合并、压缩
+// （2）实现sass编译与css合并、压缩
+// （3）实现html压缩
+// （4）实现image压缩
+// （5）开发环境预览、热更新
+// （6）生产环境各个文件打包
+//  -------------------------------------------------------------------------------
+
+const gulp = require('gulp')
+const babel = require('gulp-babel') //  es6转es5语法
+const eslint = require('gulp-eslint') //  eslint代码检测
+const concat = require('gulp-concat') //  文件合并
+const uglify = require('gulp-uglify') //  js压缩
+const less = require('gulp-less') //  less编译
+const htmlmin = require('gulp-htmlmin') //  html压缩
+const connect = require('gulp-connect') //  开启server服务
+const imagemin = require('gulp-imagemin') //  图片压缩
+const del = require('del')  //  清空目录
+const cleanCss = require('gulp-clean-css')  //  css压缩
+
+//  清空dist目录
+gulp.task('clean', async () => {
+  await del(['dist'])
+})
+
+
+//  html压缩公共函数
+const htmlMin = () => {
+  return gulp.src('index.html')
+    .pipe(htmlmin(
+      {
+        collapseWhitespace: true //  压缩去除空格
+      }
+    ))
+    .pipe(gulp.dest('dist'))
+}
+//  html:dev task用于开发环境下,浏览器自动刷新
+gulp.task('html:dev', async () => {
+  await htmlMin
+    .pipe(connect.reload())
+})
+//  html:build task,用于生产环境
+gulp.task('html:build', async () => {
+  await htmlMin()
+})
+
+
+//  less转换,合并,压缩css公共函数
+const cssMin = () => {
+  return gulp.src(['css/style.less', 'css/*.css'])
+    .pipe(less())
+    .pipe(concat('style.min.css'))
+    .pipe(cleanCss())
+    .pipe(gulp.dest('dist/css'))
+}
+//  css:dev任务,用于开发环境
+gulp.task('css:dev', async () => {
+  await cssMin()
+    .pipe(connect.reload())
+})
+//  css:build任务,用于生产环境
+gulp.task('css:build', async () => {
+  await cssMin()
+})
+
+
+//  js eslint检测 babel转换,合并,压缩公共函数
+const jsMin = () => {
+  return gulp.src('js/*.js')
+    .pipe(eslint())
+    .pipe(eslint.format())
+    .pipe(eslint.failAfterError())
+    .pipe(babel({
+      presets: ['@babel/env']
+    }))
+    .pipe(concat('main.min.js'))
+    .pipe(uglify())
+    .pipe(gulp.dest('dist/js'))
+}
+//  js:dev,用于开发环境
+gulp.task('js:dev', async () => {
+  await jsMin()
+    .pipe(connect.reload())
+})
+//  js:build,用于生产环境
+gulp.task('js:build', async () => {
+  await jsMin()
+})
+
+
+//  图片压缩公共函数
+const imageMin = () => {
+  return gulp.src('img/*.png')
+    .pipe(imagemin())
+    .pipe(gulp.dest('dist/img'))
+}
+//  image:dev任务,用于开发环境
+gulp.task('image:dev', async () => {
+  await imageMin()
+    .pipe(connect.reload())
+})
+//  image:build
+gulp.task('image:build', async () => {
+  await imageMin()
+})
