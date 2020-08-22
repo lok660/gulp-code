@@ -1,3 +1,7 @@
+// （1）当前目录下的main.scss、style.scss转换css然后合并压缩成scss.css写入到dist目录。
+// （2）当前目录下的所有css文件合并压缩成style.min.css写入到dist目录。
+// ------------------------------------------------------------------------------------
+
 const gulp = require('gulp');
 const concat = require('gulp-concat'); // 合并文件
 const cleanCss = require('gulp-clean-css'); // 压缩css

@@ -1,3 +1,6 @@
+// 将当前目录下的main.js、hello.js、world.js进行eslint检测，babel转换，合并压缩成app.min.js输出到dist目录
+// -------------------------------------------------------------------------------
+
 const gulp = require('gulp');
 const babel = require('gulp-babel'); // babel转换
 const eslint = require('gulp-eslint'); // eslint检测
