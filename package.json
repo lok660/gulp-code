@@ -6,7 +6,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "gulp dev --gulpfile gulp-dev-build/gulpfile.js",
-    "build": "gulp build --gulpfile gulp-dev-build/gulpfile.js"
+    "build": "gulp build --gulpfile gulp-dev-build/gulpfile.js",
+    "build:html-image": "gulp --gulpfile gulp-html-image/gulpfile.js",
+    "build:css": "gulp --gulpfile gulp-css/gulpfile.js",
+    "build:js": "gulp --gulpfile gulp-js/gulpfile.js"
   },
   "author": "",
   "license": "ISC",
